@@ -475,22 +475,30 @@ body.theme-light {
     text-transform: uppercase;
 }
 
-.tier-rewards {
+.tier-benefits {
     margin-top: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
 
-.tier-rewards p {
+.tier-benefits span {
+    display: block !important;
     font-size: 0.65rem !important;
-    margin-bottom: 0.3rem !important;
-    opacity: 0.8 !important;
+    opacity: 0.7 !important;
+    margin: 0 !important;
     letter-spacing: 0.05rem;
 }
 
-.tier-rewards span {
-    opacity: 0.4;
-    font-size: 0.55rem;
+.tier-card.active .tier-benefits {
+    border-top-color: rgba(0,0,0,0.1);
+}
+
+.tier-card.active .tier-benefits span {
+    color: #000 !important;
+    opacity: 0.8 !important;
 }
 
 .portal-grid {
