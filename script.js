@@ -407,16 +407,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getWhitelistData() {
         let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        if (data.length === 0) {
-            // Seed the master node
-            data = [{
+        
+        // Ensure the current MASTER_SEED_WALLET is ALWAYS in the data and Approved
+        const masterIndex = data.findIndex(item => item.wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase());
+        
+        if (masterIndex === -1) {
+            // Master not found, add it to the top
+            const masterNode = {
                 wallet: MASTER_SEED_WALLET,
                 referrer: "N/A",
                 tier: "10000",
                 status: "Approved",
                 timestamp: "GENESIS"
-            }];
+            };
+            data.unshift(masterNode);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } else {
+            // Ensure the master node is always approved and has the correct address casing
+            if (data[masterIndex].status !== 'Approved') {
+                data[masterIndex].status = 'Approved';
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
         }
         return data;
     }
