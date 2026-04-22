@@ -338,12 +338,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!wallet || !referrer) return alert("Please fill in both wallet and referrer.");
                 if (wallet.toLowerCase() === referrer.toLowerCase()) return alert("You cannot refer yourself.");
                 
-                // Validate Referrer exists and is Approved
-                const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                // Validate Referrer exists and is Approved using the sync-safe function
+                const data = getWhitelistData();
                 const isReferrerValid = data.some(item => item.wallet.toLowerCase() === referrer.toLowerCase() && item.status === 'Approved');
                 
-                // If it's the very first record ever, allow it (Bootstrap)
-                if (!isReferrerValid && data.length > 0) {
+                if (!isReferrerValid) {
                     return alert(translations[currentLang]['err_invalid_referrer'] || "Invalid Referrer Address.");
                 }
             }
