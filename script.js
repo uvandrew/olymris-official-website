@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Official Wallet Config
+    const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
+    const DEFAULT_OFFICIAL_WALLET = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+
+    function getOfficialWallet() {
+        return localStorage.getItem(OFFICIAL_WALLET_KEY) || DEFAULT_OFFICIAL_WALLET;
+    }
+    
     // --- 1. Custom Cursor & Follower ---
     const cursor = document.querySelector('.custom-cursor');
     const follower = document.querySelector('.custom-cursor-follower');
@@ -301,6 +309,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.modal-step').forEach(el => el.classList.remove('active'));
         document.getElementById(`step-${step}`).classList.add('active');
         currentStep = step;
+
+        // If entering payment step, update the official wallet address
+        if (step === 3) {
+            const paymentAddrElem = document.getElementById('payment-addr');
+            if (paymentAddrElem) {
+                paymentAddrElem.innerText = getOfficialWallet();
+            }
+        }
     }
 
     whitelistBtns.forEach(btn => btn?.addEventListener('click', openModal));
@@ -511,6 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('theme-dark');
         document.body.classList.remove('theme-light');
         document.querySelectorAll('section:not(#admin-section)').forEach(s => s.style.display = 'none');
+        initAdminPaymentUI();
         renderAdminTable();
     }
 
@@ -537,6 +554,23 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('hashchange', checkAdminHash);
     window.addEventListener('load', checkAdminHash);
     checkAdminHash();
+
+    // --- 8b. Official Payment Management ---
+    const officialWalletInput = document.getElementById('official-wallet-input');
+    const saveOfficialWalletBtn = document.getElementById('save-official-wallet');
+
+    function initAdminPaymentUI() {
+        if (officialWalletInput) {
+            officialWalletInput.value = getOfficialWallet();
+        }
+    }
+
+    saveOfficialWalletBtn?.addEventListener('click', () => {
+        const newAddr = officialWalletInput.value.trim();
+        if (newAddr.length < 20) return alert("Please enter a valid wallet address.");
+        localStorage.setItem(OFFICIAL_WALLET_KEY, newAddr);
+        alert("Official System Address Updated Successfully!");
+    });
 
     clearBtn.addEventListener('click', () => {
         if (confirm("Clear all whitelist records?")) {

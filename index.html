@@ -370,6 +370,16 @@
                         <button id="clear-data" style="font-size: 0.6rem; opacity: 0.5; background: none; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0.5rem 1rem; cursor: pointer;">Clear All</button>
                     </div>
                 </div>
+
+                <!-- NEW: Payment Address Management -->
+                <div style="margin-bottom: 3rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px;">
+                    <label style="font-size: 0.6rem; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.2rem; margin-bottom: 1rem; display: block;">Global Official USDT Address (BEP20)</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="text" id="official-wallet-input" placeholder="0x..." style="flex: 1; background: #000; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 1rem; outline: none; font-family: monospace; font-size: 1rem;">
+                        <button id="save-official-wallet" style="background: #fff; color: #000; border: none; padding: 0 2rem; cursor: pointer; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1rem;">UPDATE SYSTEM ADDRESS</button>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.6rem; opacity: 0.4; color: #00ff88;">* This address is displayed to all new whitelist participants during the final step.</p>
+                </div>
                 <div class="admin-table-wrapper reveal">
                     <table class="admin-table">
                         <thead>
