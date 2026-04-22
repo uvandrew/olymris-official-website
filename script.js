@@ -404,7 +404,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-md');
 
     const STORAGE_KEY = 'olymris_whitelist_v3';
-    const MASTER_SEED_WALLET = "0x8a72257E4731f5FFe83C0746c6Dc88c2EDDCF1F1";
+    const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
+    const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
 
     function getWhitelistData() {
         let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
