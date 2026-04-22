@@ -192,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'modal_step3_title': 'Finalize', 'modal_step3_body': 'Send the selected amount to the official BSC address below.', 'modal_copy': 'Copy Address', 'modal_payment_note': 'Once confirmed, your account will be activated within 24 hours.', 'modal_finish': 'I Have Paid',
             'modal_referrer_label': 'REFERRER WALLET (REQUIRED)', 'err_invalid_referrer': 'Invalid Referrer Address. Referrer must be an approved node holder.',
             'nav_portal': 'Node Portal', 'portal_title': 'Node Portal', 'portal_desc': 'Enter your wallet address to view your node status and allocations.', 'portal_view_btn': 'View My Node', 'portal_status_active': 'Node Active', 'portal_status_pending': 'Verification Pending', 'portal_label_tier': 'Participation Tier', 'portal_label_ausd': 'AUSD Balance', 'portal_label_olym': 'OLYM Allocation', 'portal_exit': 'Exit Portal', 'portal_pending_msg': 'Verification is currently in progress. Your allocations will appear here once approved.',
-            'tier_3k_label': '+ Standard Allocation', 'tier_5k_label': '+ Enhanced Quota', 'tier_10k_label': '+ Genesis Priority'
+            'tier_3k_label': '+ Standard Allocation', 'tier_5k_label': '+ Enhanced Quota', 'tier_10k_label': '+ Genesis Priority',
+            'portal_buy_again': 'Add Node / Upgrade'
         },
         'zh-hk': {
             'nav_genesis': '創世', 'nav_dual_core': '雙核心', 'nav_ecosystem': '生態系統', 'nav_the_loop': '循環',
@@ -213,7 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'modal_step3_title': '完成', 'modal_step3_body': '將所選金額發送到下方的官方 BSC 地址。', 'modal_copy': '複製地址', 'modal_payment_note': '一旦確認，您的帳戶將在 24 小時內激活。', 'modal_finish': '我已支付',
             'modal_referrer_label': '推薦人錢包地址（必填）', 'err_invalid_referrer': '無效的推薦人地址。推薦人必須是已獲得批准的節點持有者。',
             'nav_portal': '節點門戶', 'portal_title': '節點門戶', 'portal_desc': '輸入您的錢包地址以查看您的節點狀態和配額。', 'portal_view_btn': '查看我的節點', 'portal_status_active': '節點已激活', 'portal_status_pending': '審核中', 'portal_label_tier': '參與等級', 'portal_label_ausd': 'AUSD 餘額', 'portal_label_olym': 'OLYM 配額', 'portal_exit': '退出門戶', 'portal_pending_msg': '審核正在進行中。批准後，您的配額將顯示在此處。',
-            'tier_3k_label': '+ 標準配額', 'tier_5k_label': '+ 增強配額', 'tier_10k_label': '+ 創世優先級'
+            'tier_3k_label': '+ 標準配額', 'tier_5k_label': '+ 增強配額', 'tier_10k_label': '+ 創世優先級',
+            'portal_buy_again': '增購 / 升級節點'
         },
         'jp': {
             'nav_genesis': 'ジェネシス', 'nav_dual_core': 'デュアルコア', 'nav_ecosystem': 'エコシステム', 'nav_the_loop': 'ループ',
@@ -233,7 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'modal_step2_title': 'ティアを選択', 'modal_step2_body': '参加レベルを選択してください。ステーブルコインとプラットフォームトークンの比率が適用されます。',
             'modal_step3_title': '完了', 'modal_step3_body': '選択した金額を以下の公式 BSC アドレスに送信してください。', 'modal_copy': 'アドレスをコピー', 'modal_payment_note': '確認後、24時間以内にアカウントが有効化されます。', 'modal_finish': '支払い完了',
             'nav_portal': 'ノードポータル', 'portal_title': 'ノードポータル', 'portal_desc': 'ウォレットアドレスを入力して、ノードのステータスと割り当てを確認してください。', 'portal_view_btn': 'マイノードを表示', 'portal_status_active': 'ノードアクティブ', 'portal_status_pending': '確認中', 'portal_label_tier': '参加ティア', 'portal_label_ausd': 'AUSD残高', 'portal_label_olym': 'OLYM配分', 'portal_exit': 'ポータルを終了', 'portal_pending_msg': '現在、確認作業を行っております。承認後、割り当てがここに表示されます。',
-            'tier_3k_label': '+ 標準配分', 'tier_5k_label': '+ 強化配分', 'tier_10k_label': '+ ジェネシス優先権'
+            'tier_3k_label': '+ 標準配分', 'tier_5k_label': '+ 強化配分', 'tier_10k_label': '+ ジェネシス優先権',
+            'portal_buy_again': 'ノード増設 / アップグレード'
         },
         'kr': {
             'nav_genesis': '제네시스', 'nav_dual_core': '듀얼 코어', 'nav_ecosystem': '에코시스템', 'nav_the_loop': '루프',
@@ -253,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'modal_step2_title': '티어 선택', 'modal_step2_body': '참여 수준을 선택하십시오. 스테이블코인 및 플랫폼 토큰 비율이 적용됩니다.',
             'modal_step3_title': '마무리', 'modal_step3_body': '선택한 금액을 아래의 공식 BSC 주소로 보내십시오.', 'modal_copy': '주소 복사', 'modal_payment_note': '확인되면 24시간 이내에 계정이 활성화됩니다.', 'modal_finish': '결제 완료',
             'nav_portal': '노드 포탈', 'portal_title': '노드 포탈', 'portal_desc': '지갑 주소를 입력하여 노드 상태 및 할당량을 확인하십시오.', 'portal_view_btn': '내 노드 보기', 'portal_status_active': '노드 활성화됨', 'portal_status_pending': '확인 중', 'portal_label_tier': '참여 티어', 'portal_label_ausd': 'AUSD 잔액', 'portal_label_olym': 'OLYM 할당량', 'portal_exit': '포탈 종료', 'portal_pending_msg': '현재 확인이 진행 중입니다. 승인되면 할당량이 여기에 표시됩니다.',
-            'tier_3k_label': '+ 표준 할당', 'tier_5k_label': '+ 강화 쿼터', 'tier_10k_label': '+ 제네시스 우선권'
+            'tier_3k_label': '+ 표준 할당', 'tier_5k_label': '+ 강화 쿼터', 'tier_10k_label': '+ 제네시스 우선권',
+            'portal_buy_again': '노드 증설 / 업그레이드'
         }
     };
 
@@ -666,6 +670,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             alert("No participation record found for this wallet address.");
         }
+    });
+    
+    // Buy Again / Upgrade Logic
+    document.getElementById('portal-buy-again-btn').addEventListener('click', () => {
+        const wallet = document.getElementById('portal-wallet').value.trim();
+        const data = getWhitelistData();
+        const node = data.find(item => item.wallet.toLowerCase() === wallet.toLowerCase());
+        
+        // 1. Close Portal Modal
+        document.getElementById('portal-modal').style.display = 'none';
+        
+        // 2. Open Whitelist Modal
+        document.getElementById('whitelist-modal').style.display = 'flex';
+        
+        // 3. Auto-fill data
+        document.getElementById('whitelist-wallet').value = wallet;
+        if (node && node.referrer !== "N/A") {
+            document.getElementById('whitelist-referrer').value = node.referrer;
+        }
+        
+        // 4. Reset whitelist steps to step 1
+        document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-1').classList.add('active');
     });
 
     // --- 10. Smooth Navbar Transition ---

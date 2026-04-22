@@ -108,7 +108,11 @@
                 <div id="portal-pending-msg" style="margin-top: 2rem; opacity: 0.6; font-size: 0.8rem; display: none;" data-i18n="portal_pending_msg">
                     Verification is currently in progress. Your allocations will appear here once approved.
                 </div>
-                <button class="cta-btn" style="margin-top: 2rem; border-color: rgba(255,255,255,0.1);" onclick="location.reload()" data-i18n="portal_exit">Exit Portal</button>
+                
+                <div class="portal-actions" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <button class="cta-btn" id="portal-buy-again-btn" data-i18n="portal_buy_again">Add Node / Upgrade</button>
+                    <button class="cta-btn" style="border-color: rgba(255,255,255,0.1); margin: 0;" onclick="location.reload()" data-i18n="portal_exit">Exit Portal</button>
+                </div>
             </div>
         </div>
     </div>
