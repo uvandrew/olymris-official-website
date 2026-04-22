@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Official Wallet Config
+    // Core Configuration Constants
+    const STORAGE_KEY = 'olymris_whitelist_v3';
+    const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
     const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
     const DEFAULT_OFFICIAL_WALLET = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
 
@@ -402,9 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-data');
     const adminSearch = document.getElementById('admin-search');
     const exportBtn = document.getElementById('export-md');
-
-    const STORAGE_KEY = 'olymris_whitelist_v3';
-    const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
 
     function getWhitelistData() {
         let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
