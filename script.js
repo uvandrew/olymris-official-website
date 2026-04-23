@@ -35,37 +35,46 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     function updateStatusDot() {} // Placeholder
 
-    // --- Referral Link System ---
-    function checkReferral() {
+    // --- Referral Link System (Mobile Hardened) ---
+    function captureReferral() {
         const urlParams = new URLSearchParams(window.location.search);
         let ref = urlParams.get('ref');
-        
-        // If ref is in URL, save to session
         if (ref && ref.startsWith('0x') && ref.length === 42) {
             sessionStorage.setItem('olymris_ref', ref);
-            // Auto-open Whitelist Modal to show it worked
+            console.log("Referral captured:", ref);
+            
+            // Auto-open modal logic
             setTimeout(() => {
                 const whitelistModal = document.getElementById('whitelist-modal');
-                if (whitelistModal) {
+                if (whitelistModal && !whitelistModal.classList.contains('active')) {
                     whitelistModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
+                    applyReferralUI();
                 }
-            }, 1500); // Small delay for smooth entry
-        }
-        
-        // Always try to fill from session
-        const savedRef = sessionStorage.getItem('olymris_ref');
-        if (savedRef) {
-            const refInput = document.getElementById('whitelist-referrer');
-            if (refInput) {
-                refInput.value = savedRef;
-                refInput.readOnly = true;
-                refInput.style.opacity = '0.6';
-                refInput.style.background = 'rgba(0,255,100,0.05)';
-            }
+            }, 1000);
         }
     }
-    checkReferral();
+
+    function applyReferralUI() {
+        const savedRef = sessionStorage.getItem('olymris_ref');
+        const refInput = document.getElementById('whitelist-referrer');
+        if (savedRef && refInput) {
+            refInput.value = savedRef;
+            refInput.readOnly = true;
+            refInput.style.opacity = '0.6';
+            refInput.style.background = 'rgba(0,255,100,0.05)';
+            refInput.style.borderColor = '#0f6';
+        }
+    }
+
+    captureReferral();
+
+    // Hook into ALL whitelist open actions to be safe
+    document.querySelectorAll('#whitelist-btn, #mobile-whitelist-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setTimeout(applyReferralUI, 100);
+        });
+    });
 
     // --- On-Screen Debugger ---
     // (Disabled for production)
