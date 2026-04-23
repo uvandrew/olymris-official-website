@@ -21,20 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function syncWithCloud() {
         if (!supabase) return;
         try {
-            // Pull latest from cloud
-            const { data, error } = await supabase.from('whitelist').select('*');
-            if (!error && data) {
-                // Merge with local data (cloud wins for existing records)
+            const { data: cloudData, error } = await supabase.from('whitelist').select('*');
+            if (!error && cloudData) {
                 let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 
-                // Simple merge logic: Use cloud data as the source of truth
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                console.log("Cloud Sync: Data pulled successfully.");
+                // Merge Logic: Combine cloud and local, removing duplicates by wallet
+                const mergedMap = new Map();
+                // Local records first
+                localData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
+                // Cloud records overwrite local if they exist (source of truth)
+                cloudData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
                 
-                // If we are in admin or portal, refresh view
-                if (typeof renderAdminTable === 'function' && adminSection.style.display === 'block') {
-                    renderAdminTable();
-                }
+                const mergedData = Array.from(mergedMap.values());
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedData));
+                
+                console.log("Cloud Sync: Success", mergedData.length, "records.");
+                if (typeof renderAdminTable === 'function') renderAdminTable();
             }
         } catch (e) {
             console.error("Cloud Sync Error:", e);
@@ -44,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function pushToCloud(record) {
         if (!supabase) return;
         try {
-            await supabase.from('whitelist').insert([record]);
+            // Upsert based on wallet address to prevent duplicates
+            await supabase.from('whitelist').upsert([record], { onConflict: 'wallet' });
             console.log("Cloud Sync: Record pushed successfully.");
         } catch (e) {
             console.warn("Cloud push failed, saved locally only.");
