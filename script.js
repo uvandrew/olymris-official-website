@@ -678,21 +678,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = getWhitelistData();
         const node = data.find(item => item.wallet.toLowerCase() === wallet.toLowerCase());
         
-        // 1. Close current Portal modal
-        closeModal();
+        // 1. Pre-fill data FIRST (while user still sees the portal)
+        document.getElementById('whitelist-wallet').value = wallet;
+        if (node && node.referrer !== "N/A") {
+            document.getElementById('whitelist-referrer').value = node.referrer;
+        }
         
-        // 2. Small delay to ensure smooth transition
-        setTimeout(() => {
-            // 3. Pre-fill data
-            document.getElementById('whitelist-wallet').value = wallet;
-            if (node && node.referrer !== "N/A") {
-                document.getElementById('whitelist-referrer').value = node.referrer;
-            }
-            
-            // 4. Open Whitelist modal and JUMP directly to Step 2 (Tier Selection)
-            openModal();
-            showStep(2);
-        }, 300);
+        // 2. Instant Swap - No flicker
+        document.getElementById('portal-modal').classList.remove('active');
+        whitelistModal.classList.add('active');
+        
+        // 3. Jump to Step 2 immediately
+        currentStep = 2;
+        showStep(2);
+        
+        // 4. Ensure background remains locked
+        document.body.style.overflow = 'hidden';
     });
 
     // --- 10. Smooth Navbar Transition ---
