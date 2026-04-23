@@ -844,14 +844,11 @@ document.addEventListener('DOMContentLoaded', () => {
         portalCheckBtn.disabled = false;
 
         if (userRecords.length > 0) {
-            // DIAGNOSTIC ALERT
-            alert("Record found! Status in database is: [" + userRecords[0].status + "]");
-            
             portalLogin.style.display = 'none';
             portalView.style.display = 'block';
             
-            const approvedRecords = userRecords.filter(r => r.status === 'Approved');
-            const pendingRecords = userRecords.filter(r => r.status !== 'Approved');
+            const approvedRecords = userRecords.filter(r => r.status.trim().toLowerCase() === 'approved');
+            const pendingRecords = userRecords.filter(r => r.status.trim().toLowerCase() !== 'approved');
 
             let totalTier = 0;
             let totalAUSD = 0;
