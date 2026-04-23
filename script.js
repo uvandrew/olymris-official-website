@@ -804,34 +804,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     portalCheckBtn?.addEventListener('click', async () => {
-        const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
-        if (!wallet) return alert("Please enter your wallet address.");
+        const inputWallet = portalWalletInput.value.trim().toLowerCase();
+        if (!inputWallet) return alert("Please enter your wallet address.");
 
-        // Force Sync with Cloud to ensure latest data is present
+        // Visual Feedback
+        const originalText = portalCheckBtn.innerText;
+        portalCheckBtn.innerText = "Searching Cloud...";
+        portalCheckBtn.disabled = true;
+
+        let userRecords = [];
+
+        // 1. Direct Cloud Query (Primary)
         if (supabase) {
-            const originalText = portalCheckBtn.innerText;
-            portalCheckBtn.innerText = "Syncing...";
-            await syncWithCloud();
-            portalCheckBtn.innerText = originalText;
-        }
-
-        // Use the function that automatically injects the Genesis Node
-        let data = getWhitelistData();
-        
-        // DOUBLE INSURANCE: If it's the Master Wallet, ensure it exists in data immediately
-        if (wallet === MASTER_SEED_WALLET.toLowerCase()) {
-            if (!data.some(item => item.wallet.toLowerCase() === wallet)) {
-                data.unshift({
-                    wallet: MASTER_SEED_WALLET,
-                    referrer: "N/A",
-                    tier: "10000",
-                    status: "Approved",
-                    timestamp: "GENESIS"
-                });
+            try {
+                // We use .ilike to be case-insensitive and handle potential messy data
+                const { data: cloudData, error } = await supabase
+                    .from('whitelist')
+                    .select('*')
+                    .ilike('wallet', `%${inputWallet}%`);
+                
+                if (error) throw error;
+                if (cloudData && cloudData.length > 0) {
+                    // Filter again locally to be 100% sure it's an exact match after trimming
+                    userRecords = cloudData.filter(r => r.wallet.trim().toLowerCase() === inputWallet);
+                }
+            } catch (err) {
+                console.error("Cloud search failed, falling back to local:", err);
             }
         }
 
-        const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
+        // 2. Local Fallback (if cloud failed or found nothing)
+        if (userRecords.length === 0) {
+            const localData = getWhitelistData();
+            userRecords = localData.filter(item => item.wallet.trim().toLowerCase() === inputWallet);
+        }
+
+        // Reset Button
+        portalCheckBtn.innerText = originalText;
+        portalCheckBtn.disabled = false;
 
         if (userRecords.length > 0) {
             portalLogin.style.display = 'none';
