@@ -964,3 +964,13 @@ h2 {
     
     .constants-bar { flex-wrap: wrap; gap: 1.5rem; }
 }
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .modal-content {
+        padding-top: 6rem !important; /* Safety for mobile notches */
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        overflow-y: auto !important;
+    }
+}

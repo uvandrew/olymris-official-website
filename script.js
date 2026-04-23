@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Cloud Status Indicator ---
+    // (Disabled for production - Re-enable for debugging if needed)
+    /*
     const statusDot = document.createElement('div');
     statusDot.id = 'cloud-status';
     statusDot.style.cssText = 'position:fixed; bottom:10px; left:10px; width:10px; height:10px; border-radius:50%; background:gray; z-index:9999; cursor:pointer; transition: 0.3s;';
@@ -29,17 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (status === 'offline') statusDot.style.background = 'gray', statusDot.title = 'Cloud Not Configured';
         if (status === 'error') statusDot.style.background = '#ff4444', statusDot.title = 'Cloud Error - Check Console';
     }
+    */
+    function updateStatusDot() {} // Placeholder
 
     // --- On-Screen Debugger ---
+    // (Disabled for production)
+    /*
     const debugBanner = document.createElement('div');
     debugBanner.id = 'debug-banner';
     debugBanner.style.cssText = 'position:fixed; top:0; left:0; width:100%; background:rgba(255,0,0,0.9); color:white; z-index:10000; padding:10px; font-size:12px; display:none; word-break:break-all;';
     document.body.appendChild(debugBanner);
-
-    function showDebug(msg) {
-        debugBanner.innerText = "CLOUD ERROR: " + msg;
-        debugBanner.style.display = 'block';
-    }
+    */
+    function showDebug(msg) { console.error(msg); }
 
     async function syncWithCloud() {
         if (!supabase) {
