@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     portalCheckBtn?.addEventListener('click', () => {
-        const wallet = portalWalletInput.value.trim().toLowerCase();
+        const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
         if (!wallet) return alert("Please enter your wallet address.");
 
         const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -675,8 +675,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    portalWalletInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') portalCheckBtn.click();
+    });
+
     function updatePortalStatus() {
-        const wallet = portalWalletInput.value.trim().toLowerCase();
+        const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
         const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
         const approvedRecords = userRecords.filter(r => r.status === 'Approved');

@@ -86,7 +86,7 @@
             <div id="portal-login">
                 <h2 data-i18n="portal_title">Node Portal</h2>
                 <p data-i18n="portal_desc">Enter your wallet address to view your node status and allocations.</p>
-                <input type="text" id="portal-wallet" class="modal-input" placeholder="0x...">
+                <input type="text" id="portal-wallet" class="modal-input" placeholder="0x..." autocorrect="off" autocapitalize="none" spellcheck="false">
                 <button class="cta-btn" id="portal-check-btn" data-i18n="portal_view_btn">View My Node</button>
             </div>
             <div id="portal-view" style="display: none;">
@@ -124,10 +124,10 @@
             <div id="step-1" class="modal-step active">
                 <h2 data-i18n="modal_step1_title">Node Whitelist</h2>
                 <p data-i18n="modal_step1_body">Enter your BSC (BEP-20) wallet address to begin onboarding.</p>
-                <input type="text" id="whitelist-wallet" class="modal-input" placeholder="0x..." style="margin-bottom: 1rem;">
+                <input type="text" id="whitelist-wallet" class="modal-input" placeholder="0x..." style="margin-bottom: 1rem;" autocorrect="off" autocapitalize="none" spellcheck="false">
                 
                 <p style="font-size: 0.7rem; opacity: 0.4; margin-top: 1rem; margin-bottom: 0.5rem;" data-i18n="modal_referrer_label">REFERRER WALLET (REQUIRED)</p>
-                <input type="text" id="whitelist-referrer" class="modal-input" placeholder="0x..." style="margin-bottom: 2rem;">
+                <input type="text" id="whitelist-referrer" class="modal-input" placeholder="0x..." style="margin-bottom: 2rem;" autocorrect="off" autocapitalize="none" spellcheck="false">
                 
                 <button class="cta-btn next-step" data-i18n="modal_next">Continue</button>
             </div>
