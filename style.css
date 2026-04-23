@@ -966,11 +966,16 @@ h2 {
 }
 /* Mobile Optimizations */
 @media (max-width: 768px) {
-    .modal-content {
-        padding-top: 6rem !important; /* Safety for mobile notches */
-        width: 100% !important;
-        height: 100% !important;
-        border-radius: 0 !important;
+    .modal {
+        align-items: flex-start !important; /* Start from top, not center */
         overflow-y: auto !important;
+    }
+    .modal-content {
+        padding: 6rem 1.5rem 4rem !important; /* Proper top padding */
+        width: 100% !important;
+        min-height: 100% !important; /* Allow growing */
+        height: auto !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
     }
 }
