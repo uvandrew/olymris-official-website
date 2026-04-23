@@ -526,11 +526,12 @@ body.theme-light {
 }
 
 #portal-status-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     text-transform: uppercase;
-    letter-spacing: 0.3rem;
+    letter-spacing: 0.2rem;
     margin-bottom: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    text-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
 }
 
 .portal-stat .val {

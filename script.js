@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
     const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
     const DEFAULT_OFFICIAL_WALLET = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+    
+    let currentLang = 'en';
 
     function getOfficialWallet() {
         return localStorage.getItem(OFFICIAL_WALLET_KEY) || DEFAULT_OFFICIAL_WALLET;
@@ -287,6 +289,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             updateLanguage(selectedLang);
+            currentLang = selectedLang;
+            
+            // Re-run portal status update if portal is visible
+            if (portalView && portalView.style.display === 'block') {
+                updatePortalStatus();
+            }
+            
             console.log(`Language switched to: ${selectedLang}`);
         });
     });
@@ -652,13 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('val-ausd').innerText = totalAUSD.toLocaleString();
             document.getElementById('val-olym').innerText = totalOLYM.toLocaleString();
             
-            if (approvedRecords.length > 0) {
-                document.getElementById('portal-status-title').innerText = translations[currentLang]['portal_status_active'];
-                document.getElementById('portal-status-title').style.color = "#0f6";
-            } else {
-                document.getElementById('portal-status-title').innerText = translations[currentLang]['portal_status_pending'];
-                document.getElementById('portal-status-title').style.color = "#ffaa00";
-            }
+            updatePortalStatus();
 
             const pendingMsg = document.getElementById('portal-pending-msg');
             if (pendingRecords.length > 0) {
@@ -671,6 +674,22 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("No participation record found for this wallet address.");
         }
     });
+
+    function updatePortalStatus() {
+        const wallet = portalWalletInput.value.trim().toLowerCase();
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
+        const approvedRecords = userRecords.filter(r => r.status === 'Approved');
+        const titleElem = document.getElementById('portal-status-title');
+
+        if (approvedRecords.length > 0) {
+            titleElem.innerText = translations[currentLang]['portal_status_active'];
+            titleElem.style.color = "#0f6";
+        } else {
+            titleElem.innerText = translations[currentLang]['portal_status_pending'];
+            titleElem.style.color = "#ffaa00";
+        }
+    }
     
     // Buy Again / Upgrade Logic
     document.getElementById('portal-buy-again-btn').addEventListener('click', () => {
