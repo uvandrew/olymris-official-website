@@ -636,7 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
         if (!wallet) return alert("Please enter your wallet address.");
 
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        // Use the function that automatically injects the Genesis Node
+        const data = getWhitelistData();
         const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
 
         if (userRecords.length > 0) {
@@ -681,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updatePortalStatus() {
         const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const data = getWhitelistData();
         const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
         const approvedRecords = userRecords.filter(r => r.status === 'Approved');
         const titleElem = document.getElementById('portal-status-title');
