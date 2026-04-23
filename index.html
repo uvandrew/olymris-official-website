@@ -85,8 +85,10 @@
             <button class="modal-close">&times;</button>
             <div id="portal-login">
                 <h2 data-i18n="portal_title">Node Portal</h2>
-                <p data-i18n="portal_desc">Enter your wallet address to view your node status and allocations.</p>
-                <input type="text" id="portal-wallet" class="modal-input" placeholder="0x..." autocorrect="off" autocapitalize="none" spellcheck="false">
+                <div style="position: relative; margin-bottom: 1rem;">
+                    <input type="text" id="portal-wallet" class="modal-input" placeholder="0x..." style="padding-right: 6rem;" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    <button id="portal-connect-btn" style="position: absolute; right: 5px; top: 5px; bottom: 5px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0 1rem; cursor: pointer; font-size: 0.6rem; letter-spacing: 0.1rem; border-radius: 2px;">CONNECT</button>
+                </div>
                 <button class="cta-btn" id="portal-check-btn" data-i18n="portal_view_btn">View My Node</button>
             </div>
             <div id="portal-view" style="display: none;">
@@ -124,7 +126,10 @@
             <div id="step-1" class="modal-step active">
                 <h2 data-i18n="modal_step1_title">Node Whitelist</h2>
                 <p data-i18n="modal_step1_body">Enter your BSC (BEP-20) wallet address to begin onboarding.</p>
-                <input type="text" id="whitelist-wallet" class="modal-input" placeholder="0x..." style="margin-bottom: 1rem;" autocorrect="off" autocapitalize="none" spellcheck="false">
+                <div style="position: relative; margin-bottom: 1rem;">
+                    <input type="text" id="whitelist-wallet" class="modal-input" placeholder="0x..." style="padding-right: 6rem; margin-bottom: 0;" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    <button id="whitelist-connect-btn" style="position: absolute; right: 5px; top: 5px; bottom: 5px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 0 1rem; cursor: pointer; font-size: 0.6rem; letter-spacing: 0.1rem; border-radius: 2px;">CONNECT</button>
+                </div>
                 
                 <p style="font-size: 0.7rem; opacity: 0.4; margin-top: 1rem; margin-bottom: 0.5rem;" data-i18n="modal_referrer_label">REFERRER WALLET (REQUIRED)</p>
                 <input type="text" id="whitelist-referrer" class="modal-input" placeholder="0x..." style="margin-bottom: 2rem;" autocorrect="off" autocapitalize="none" spellcheck="false">
