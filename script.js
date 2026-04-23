@@ -8,6 +8,52 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let currentLang = 'en';
 
+    // --- Cloud Database Configuration ---
+    // Successfully connected to Olymris-Portal on Supabase
+    const SUPABASE_URL = 'https://nbwbcywekvffzrishrss.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_chuN4C2iwECd9IFDsWyBRg_K_zmqnRq';
+    
+    let supabase = null;
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+
+    async function syncWithCloud() {
+        if (!supabase) return;
+        try {
+            // Pull latest from cloud
+            const { data, error } = await supabase.from('whitelist').select('*');
+            if (!error && data) {
+                // Merge with local data (cloud wins for existing records)
+                let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                
+                // Simple merge logic: Use cloud data as the source of truth
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                console.log("Cloud Sync: Data pulled successfully.");
+                
+                // If we are in admin or portal, refresh view
+                if (typeof renderAdminTable === 'function' && adminSection.style.display === 'block') {
+                    renderAdminTable();
+                }
+            }
+        } catch (e) {
+            console.error("Cloud Sync Error:", e);
+        }
+    }
+
+    async function pushToCloud(record) {
+        if (!supabase) return;
+        try {
+            await supabase.from('whitelist').insert([record]);
+            console.log("Cloud Sync: Record pushed successfully.");
+        } catch (e) {
+            console.warn("Cloud push failed, saved locally only.");
+        }
+    }
+
+    // Initial sync
+    syncWithCloud();
+
     function getOfficialWallet() {
         return localStorage.getItem(OFFICIAL_WALLET_KEY) || DEFAULT_OFFICIAL_WALLET;
     }
@@ -410,6 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
         allSubmissions.push(submission);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allSubmissions));
 
+        // Push to Cloud for cross-device sync
+        pushToCloud(submission);
+
         alert("Submission received. Our team will verify the transaction on the BSC network. Your account will be activated within 24 hours.");
         closeModal();
     });
@@ -509,20 +558,36 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
-    window.toggleAdminStatus = (index) => {
+    window.toggleAdminStatus = async (index) => {
         let data = getWhitelistData();
-        if (data[index].wallet === MASTER_SEED_WALLET) return; // Protect Master
-        data[index].status = data[index].status === 'Approved' ? 'Verification Pending' : 'Approved';
+        if (data[index].wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) return; // Protect Master
+        
+        const newStatus = data[index].status === 'Approved' ? 'Verification Pending' : 'Approved';
+        data[index].status = newStatus;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        
+        // Sync to cloud
+        if (supabase) {
+            await supabase.from('whitelist').update({ status: newStatus }).eq('wallet', data[index].wallet);
+        }
+        
         renderAdminTable();
     };
 
-    window.deleteAdminRecord = (index) => {
+    window.deleteAdminRecord = async (index) => {
         let data = getWhitelistData();
-        if (data[index].wallet === MASTER_SEED_WALLET) return; // Protect Master
+        if (data[index].wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) return; // Protect Master
+        
         if (confirm("Are you sure you want to delete this record?")) {
+            const walletToDelete = data[index].wallet;
             data.splice(index, 1);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            
+            // Sync to cloud
+            if (supabase) {
+                await supabase.from('whitelist').delete().eq('wallet', walletToDelete);
+            }
+            
             renderAdminTable();
         }
     };
