@@ -872,12 +872,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const approvedRecords = userRecords.filter(r => r.status === 'Approved');
         const titleElem = document.getElementById('portal-status-title');
 
-        if (approvedRecords.length > 0) {
-            titleElem.innerText = translations[currentLang]['portal_status_active'];
-            titleElem.style.color = "#0f6";
-        } else {
-            titleElem.innerText = translations[currentLang]['portal_status_pending'];
-            titleElem.style.color = "#ffaa00";
+        if (titleElem) {
+            if (approvedRecords.length > 0) {
+                titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_active']) || "NODE ACTIVE";
+                titleElem.style.color = "#0f6";
+            } else {
+                titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_pending']) || "VERIFICATION PENDING";
+                titleElem.style.color = "#ffaa00";
+            }
+            titleElem.style.display = "block";
+            titleElem.style.visibility = "visible";
         }
     }
     
