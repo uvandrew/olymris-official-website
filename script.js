@@ -653,10 +653,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('val-olym').innerText = totalOLYM.toLocaleString();
             
             if (approvedRecords.length > 0) {
-                document.getElementById('portal-status-title').innerText = "Node Active";
+                document.getElementById('portal-status-title').innerText = translations[currentLang]['portal_status_active'];
                 document.getElementById('portal-status-title').style.color = "#0f6";
             } else {
-                document.getElementById('portal-status-title').innerText = "Verification Pending";
+                document.getElementById('portal-status-title').innerText = translations[currentLang]['portal_status_pending'];
                 document.getElementById('portal-status-title').style.color = "#ffaa00";
             }
 
