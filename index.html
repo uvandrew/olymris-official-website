@@ -112,6 +112,7 @@
                 </div>
                 
                 <div class="portal-actions" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <button class="cta-btn" id="portal-copy-ref-btn" style="background: #0f6; color: #000; border-color: #0f6;">Copy Referral Link</button>
                     <button class="cta-btn" id="portal-buy-again-btn" data-i18n="portal_buy_again">Add Node / Upgrade</button>
                     <button class="cta-btn" style="border-color: rgba(255,255,255,0.1); margin: 0;" onclick="location.reload()" data-i18n="portal_exit">Exit Portal</button>
                 </div>
@@ -180,7 +181,10 @@
                     <button class="copy-btn" data-i18n="modal_copy">Copy Address</button>
                 </div>
                 <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 1rem;" data-i18n="modal_payment_note">Once confirmed, your account will be activated within 24 hours.</p>
-                <button class="cta-btn finish-step" data-i18n="modal_finish">I Have Paid</button>
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <button class="cta-btn" id="pay-via-wallet-btn" style="background: #fff; color: #000; border: none; margin: 0;">Pay via Wallet (One-Click)</button>
+                    <button class="cta-btn finish-step" style="background: none; border: 1px solid rgba(255,255,255,0.2); font-size: 0.7rem; padding: 0.5rem;" data-i18n="modal_finish">I Have Paid Manually</button>
+                </div>
             </div>
         </div>
     </div>
@@ -426,6 +430,8 @@
         </div>
     </footer>
 
+    <!-- Web3 Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>

@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
     const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
     const DEFAULT_OFFICIAL_WALLET = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+    const USDT_CONTRACT_BSC = '0x55d398326f99059ff775485246999027b3197955';
     
     let currentLang = 'en';
 
@@ -33,6 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     */
     function updateStatusDot() {} // Placeholder
+
+    // --- Referral Link System ---
+    function checkReferral() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref');
+        if (ref && ref.startsWith('0x') && ref.length === 42) {
+            const refInput = document.getElementById('whitelist-referrer');
+            if (refInput) {
+                refInput.value = ref;
+                refInput.readOnly = true;
+                refInput.style.opacity = '0.6';
+                refInput.title = "Referrer set via link";
+            }
+        }
+    }
+    checkReferral();
 
     // --- On-Screen Debugger ---
     // (Disabled for production)
@@ -895,6 +912,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('portal-connect-btn')?.addEventListener('click', () => connectWallet('portal-wallet'));
     document.getElementById('whitelist-connect-btn')?.addEventListener('click', () => connectWallet('whitelist-wallet'));
+
+    // --- Referral Link Copy Logic ---
+    document.getElementById('portal-copy-ref-btn')?.addEventListener('click', () => {
+        const wallet = document.getElementById('portal-wallet').value.trim();
+        if (!wallet) return alert("Wallet not connected.");
+        const refLink = `${window.location.origin}${window.location.pathname}?ref=${wallet}`;
+        navigator.clipboard.writeText(refLink);
+        const btn = document.getElementById('portal-copy-ref-btn');
+        const oldText = btn.innerText;
+        btn.innerText = "COPIED!";
+        setTimeout(() => btn.innerText = oldText, 2000);
+    });
+
+    // --- Phase B: One-Click Payment Logic ---
+    document.getElementById('pay-via-wallet-btn')?.addEventListener('click', async () => {
+        if (typeof window.ethereum === 'undefined') return alert("No crypto wallet detected.");
+        
+        const tierCard = document.querySelector('.tier-card.active');
+        if (!tierCard) return alert("Please select a tier first.");
+        const amount = tierCard.getAttribute('data-tier');
+        const officialWallet = getOfficialWallet();
+
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            
+            const usdtContract = new ethers.Contract(USDT_CONTRACT_BSC, [
+                "function transfer(address to, uint256 amount) public returns (bool)"
+            ], signer);
+
+            const btn = document.getElementById('pay-via-wallet-btn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            // Parse units (USDT on BSC has 18 decimals, but USDT on Ethereum has 6. 
+            // IMPORTANT: BSC USDT BEP20 is 18 decimals)
+            const tx = await usdtContract.transfer(officialWallet, ethers.utils.parseUnits(amount, 18));
+            
+            alert("Transaction submitted! Please wait for network confirmation.");
+            btn.innerText = "Transaction Sent";
+            
+            // Automatically trigger the 'I Have Paid' logic once tx is sent
+            document.querySelector('.finish-step').click();
+            
+        } catch (error) {
+            console.error("Payment failed", error);
+            alert("Payment failed: " + (error.message || "Unknown error"));
+            document.getElementById('pay-via-wallet-btn').innerText = "Pay via Wallet (One-Click)";
+            document.getElementById('pay-via-wallet-btn').disabled = false;
+        }
+    });
 
     // --- 10. Smooth Navbar Transition ---
     const navbar = document.querySelector('.navbar');
