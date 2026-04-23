@@ -637,7 +637,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!wallet) return alert("Please enter your wallet address.");
 
         // Use the function that automatically injects the Genesis Node
-        const data = getWhitelistData();
+        let data = getWhitelistData();
+        
+        // DOUBLE INSURANCE: If it's the Master Wallet, ensure it exists in data immediately
+        if (wallet === MASTER_SEED_WALLET.toLowerCase()) {
+            if (!data.some(item => item.wallet.toLowerCase() === wallet)) {
+                data.unshift({
+                    wallet: MASTER_SEED_WALLET,
+                    referrer: "N/A",
+                    tier: "10000",
+                    status: "Approved",
+                    timestamp: "GENESIS"
+                });
+            }
+        }
+
         const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
 
         if (userRecords.length > 0) {
