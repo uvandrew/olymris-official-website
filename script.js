@@ -803,9 +803,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    portalCheckBtn?.addEventListener('click', () => {
+    portalCheckBtn?.addEventListener('click', async () => {
         const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
         if (!wallet) return alert("Please enter your wallet address.");
+
+        // Force Sync with Cloud to ensure latest data is present
+        if (supabase) {
+            const originalText = portalCheckBtn.innerText;
+            portalCheckBtn.innerText = "Syncing...";
+            await syncWithCloud();
+            portalCheckBtn.innerText = originalText;
+        }
 
         // Use the function that automatically injects the Genesis Node
         let data = getWhitelistData();
