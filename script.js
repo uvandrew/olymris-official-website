@@ -18,14 +18,46 @@ document.addEventListener('DOMContentLoaded', () => {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
+    // --- Cloud Status Indicator ---
+    const statusDot = document.createElement('div');
+    statusDot.id = 'cloud-status';
+    statusDot.style.cssText = 'position:fixed; bottom:10px; left:10px; width:10px; height:10px; border-radius:50%; background:gray; z-index:9999; cursor:pointer; transition: 0.3s;';
+    document.body.appendChild(statusDot);
+
+    function updateStatusDot(status) {
+        if (status === 'online') statusDot.style.background = '#0f6', statusDot.title = 'Cloud Connected';
+        if (status === 'offline') statusDot.style.background = 'gray', statusDot.title = 'Cloud Not Configured';
+        if (status === 'error') statusDot.style.background = '#ff4444', statusDot.title = 'Cloud Error - Check Console';
+    }
+
+    // --- On-Screen Debugger ---
+    const debugBanner = document.createElement('div');
+    debugBanner.id = 'debug-banner';
+    debugBanner.style.cssText = 'position:fixed; top:0; left:0; width:100%; background:rgba(255,0,0,0.9); color:white; z-index:10000; padding:10px; font-size:12px; display:none; word-break:break-all;';
+    document.body.appendChild(debugBanner);
+
+    function showDebug(msg) {
+        debugBanner.innerText = "CLOUD ERROR: " + msg;
+        debugBanner.style.display = 'block';
+    }
+
     async function syncWithCloud() {
-        if (!supabase) return;
+        if (!supabase) {
+            updateStatusDot('offline');
+            return;
+        }
         try {
             const { data: cloudData, error } = await supabase.from('whitelist').select('*');
-            if (!error && cloudData) {
+            if (error) {
+                showDebug(error.message);
+                updateStatusDot('error');
+                return;
+            }
+
+            updateStatusDot('online');
+            debugBanner.style.display = 'none';
+            if (cloudData) {
                 let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                
-                // 1. Merge Cloud to Local
                 const mergedMap = new Map();
                 localData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
                 cloudData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
@@ -33,32 +65,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const mergedData = Array.from(mergedMap.values());
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedData));
                 
-                // 2. IMPORTANT: If local has records that cloud doesn't, push them UP
-                // This migrates your PC's existing records to the new cloud database
                 for (const item of localData) {
                     const existsInCloud = cloudData.some(c => c.wallet.toLowerCase() === item.wallet.toLowerCase());
                     if (!existsInCloud) {
-                        console.log("Migrating local record to cloud:", item.wallet);
                         await pushToCloud(item);
                     }
                 }
-
-                console.log("Cloud Sync: Success", mergedData.length, "records.");
                 if (typeof renderAdminTable === 'function') renderAdminTable();
             }
         } catch (e) {
-            console.error("Cloud Sync Error:", e);
+            showDebug(e.message || "Unknown Exception");
+            updateStatusDot('error');
         }
     }
 
     async function pushToCloud(record) {
         if (!supabase) return;
         try {
-            // Upsert based on wallet address to prevent duplicates
-            await supabase.from('whitelist').upsert([record], { onConflict: 'wallet' });
-            console.log("Cloud Sync: Record pushed successfully.");
+            // Remove id from record to let Supabase handle its own serial id
+            const { id, ...cleanRecord } = record;
+            const { error } = await supabase.from('whitelist').upsert([cleanRecord], { onConflict: 'wallet' });
+            if (error) {
+                showDebug("Push failed: " + error.message);
+                updateStatusDot('error');
+            } else {
+                console.log("Cloud Sync: Success");
+            }
         } catch (e) {
-            console.warn("Cloud push failed, saved locally only.");
+            showDebug("Push exception: " + e.message);
+            updateStatusDot('error');
         }
     }
 
