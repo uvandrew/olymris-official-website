@@ -25,16 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!error && cloudData) {
                 let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 
-                // Merge Logic: Combine cloud and local, removing duplicates by wallet
+                // 1. Merge Cloud to Local
                 const mergedMap = new Map();
-                // Local records first
                 localData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
-                // Cloud records overwrite local if they exist (source of truth)
                 cloudData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
                 
                 const mergedData = Array.from(mergedMap.values());
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedData));
                 
+                // 2. IMPORTANT: If local has records that cloud doesn't, push them UP
+                // This migrates your PC's existing records to the new cloud database
+                for (const item of localData) {
+                    const existsInCloud = cloudData.some(c => c.wallet.toLowerCase() === item.wallet.toLowerCase());
+                    if (!existsInCloud) {
+                        console.log("Migrating local record to cloud:", item.wallet);
+                        await pushToCloud(item);
+                    }
+                }
+
                 console.log("Cloud Sync: Success", mergedData.length, "records.");
                 if (typeof renderAdminTable === 'function') renderAdminTable();
             }
