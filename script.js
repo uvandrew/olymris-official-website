@@ -604,6 +604,16 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
+    document.getElementById('cloud-sync-btn')?.addEventListener('click', async (e) => {
+        const btn = e.target;
+        btn.innerText = "Syncing...";
+        btn.disabled = true;
+        await syncWithCloud();
+        btn.innerText = "Force Cloud Sync";
+        btn.disabled = false;
+        alert("Cloud synchronization complete! Records are now globally available.");
+    });
+
     window.toggleAdminStatus = async (index) => {
         let data = getWhitelistData();
         if (data[index].wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) return; // Protect Master
@@ -709,10 +719,15 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Official System Address Updated Successfully!");
     });
 
-    clearBtn.addEventListener('click', () => {
-        if (confirm("Clear all whitelist records?")) {
+    clearBtn?.addEventListener('click', async () => {
+        if (confirm("Permanently clear ALL records from local and cloud?")) {
             localStorage.removeItem(STORAGE_KEY);
-            renderAdminTable();
+            if (supabase) {
+                // Delete all rows where wallet is not '0x0' (trick to delete all)
+                await supabase.from('whitelist').delete().neq('wallet', '0x0');
+            }
+            alert("All data cleared.");
+            location.reload();
         }
     });
 
