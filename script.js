@@ -689,8 +689,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('whitelist-referrer').value = node.referrer;
             }
             
-            // 4. Open Whitelist modal via official function
+            // 4. Open Whitelist modal and JUMP directly to Step 2 (Tier Selection)
             openModal();
+            showStep(2);
         }, 300);
     });
 
