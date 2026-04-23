@@ -678,21 +678,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = getWhitelistData();
         const node = data.find(item => item.wallet.toLowerCase() === wallet.toLowerCase());
         
-        // 1. Close Portal Modal
-        document.getElementById('portal-modal').style.display = 'none';
+        // 1. Close current Portal modal
+        closeModal();
         
-        // 2. Open Whitelist Modal
-        document.getElementById('whitelist-modal').style.display = 'flex';
-        
-        // 3. Auto-fill data
-        document.getElementById('whitelist-wallet').value = wallet;
-        if (node && node.referrer !== "N/A") {
-            document.getElementById('whitelist-referrer').value = node.referrer;
-        }
-        
-        // 4. Reset whitelist steps to step 1
-        document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step-1').classList.add('active');
+        // 2. Small delay to ensure smooth transition
+        setTimeout(() => {
+            // 3. Pre-fill data
+            document.getElementById('whitelist-wallet').value = wallet;
+            if (node && node.referrer !== "N/A") {
+                document.getElementById('whitelist-referrer').value = node.referrer;
+            }
+            
+            // 4. Open Whitelist modal via official function
+            openModal();
+        }, 300);
     });
 
     // --- 10. Smooth Navbar Transition ---
