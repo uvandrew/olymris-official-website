@@ -38,14 +38,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Referral Link System ---
     function checkReferral() {
         const urlParams = new URLSearchParams(window.location.search);
-        const ref = urlParams.get('ref');
+        let ref = urlParams.get('ref');
+        
+        // If ref is in URL, save to session
         if (ref && ref.startsWith('0x') && ref.length === 42) {
+            sessionStorage.setItem('olymris_ref', ref);
+            // Auto-open Whitelist Modal to show it worked
+            setTimeout(() => {
+                const whitelistModal = document.getElementById('whitelist-modal');
+                if (whitelistModal) {
+                    whitelistModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }, 1500); // Small delay for smooth entry
+        }
+        
+        // Always try to fill from session
+        const savedRef = sessionStorage.getItem('olymris_ref');
+        if (savedRef) {
             const refInput = document.getElementById('whitelist-referrer');
             if (refInput) {
-                refInput.value = ref;
+                refInput.value = savedRef;
                 refInput.readOnly = true;
                 refInput.style.opacity = '0.6';
-                refInput.title = "Referrer set via link";
+                refInput.style.background = 'rgba(0,255,100,0.05)';
             }
         }
     }
