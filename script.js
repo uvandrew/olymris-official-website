@@ -844,6 +844,9 @@ document.addEventListener('DOMContentLoaded', () => {
         portalCheckBtn.disabled = false;
 
         if (userRecords.length > 0) {
+            // DIAGNOSTIC ALERT
+            alert("Record found! Status in database is: [" + userRecords[0].status + "]");
+            
             portalLogin.style.display = 'none';
             portalView.style.display = 'block';
             
@@ -865,7 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('val-ausd').innerText = totalAUSD.toLocaleString();
             document.getElementById('val-olym').innerText = totalOLYM.toLocaleString();
             
-            updatePortalStatus();
+            updatePortalStatus(userRecords);
 
             const pendingMsg = document.getElementById('portal-pending-msg');
             if (pendingRecords.length > 0) {
@@ -883,24 +886,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') portalCheckBtn.click();
     });
 
-    function updatePortalStatus() {
-        const wallet = portalWalletInput.value.replace(/\s/g, '').toLowerCase();
-        const data = getWhitelistData();
-        const userRecords = data.filter(item => item.wallet.toLowerCase() === wallet);
-        const approvedRecords = userRecords.filter(r => r.status === 'Approved');
+    function updatePortalStatus(records) {
         const titleElem = document.getElementById('portal-status-title');
+        if (!titleElem || !records) return;
 
-        if (titleElem) {
-            if (approvedRecords.length > 0) {
-                titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_active']) || "NODE ACTIVE";
-                titleElem.style.color = "#0f6";
-            } else {
-                titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_pending']) || "VERIFICATION PENDING";
-                titleElem.style.color = "#ffaa00";
-            }
-            titleElem.style.display = "block";
-            titleElem.style.visibility = "visible";
+        const approvedRecords = records.filter(r => r.status.trim().toLowerCase() === 'approved');
+
+        if (approvedRecords.length > 0) {
+            titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_active']) || "NODE ACTIVE";
+            titleElem.style.color = "#0f6";
+        } else {
+            titleElem.innerText = (translations[currentLang] && translations[currentLang]['portal_status_pending']) || "VERIFICATION PENDING";
+            titleElem.style.color = "#ffaa00";
         }
+        titleElem.style.display = "block";
+        titleElem.style.visibility = "visible";
     }
     
     // Buy Again / Upgrade Logic
