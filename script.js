@@ -143,16 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 2. Overwrite/Add with Cloud records (Source of Truth)
                 cloudData.forEach(item => {
                     if (item && item.wallet) {
-                        // Ensure required fields exist
+                        // Ensure required fields exist and wallets are lowercase
                         const validItem = {
-                            wallet: item.wallet,
-                            referrer: item.referrer || 'N/A',
+                            wallet: item.wallet.toLowerCase(),
+                            referrer: (item.referrer || 'N/A').toLowerCase(),
                             tier: item.tier || '3000',
                             status: item.status || 'Verification Pending',
                             is_approved_referrer: item.is_approved_referrer || false,
                             timestamp: item.timestamp || item.created_at || new Date().toISOString()
                         };
-                        mergedMap.set(item.wallet.toLowerCase(), validItem);
+                        mergedMap.set(validItem.wallet, validItem);
                     }
                 });
                 
@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const { data: refData, error } = await supabase
                             .from('whitelist')
                             .select('is_approved_referrer')
-                            .eq('wallet', referrer)
+                            .eq('wallet', referrer.toLowerCase()) // Force lowercase query
                             .maybeSingle();
                         
                         if (refData && refData.is_approved_referrer === true) {
@@ -626,8 +626,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Save to LocalStorage
         const submission = {
-            wallet: wallet,
-            referrer: referrer,
+            wallet: wallet.toLowerCase(),
+            referrer: referrer.toLowerCase(),
             tier: tier,
             timestamp: new Date().toLocaleString(),
             status: "Verification Pending",
