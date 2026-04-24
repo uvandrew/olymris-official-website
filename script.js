@@ -721,7 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const blob = new Blob([md], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
+        URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `olymris_nodes_${new Date().toISOString().split('T')[0]}.md`;
@@ -750,6 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (supabase) {
             await supabase.from('whitelist').update({ is_approved_referrer: newState }).eq('wallet', data[index].wallet);
         }
+        alert("Referrer Authorization Updated: " + (newState ? "Authorized" : "Unauthorized"));
         renderAdminTable();
     };
 
