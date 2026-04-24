@@ -1,8 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // Core Configuration Constants
-    const STORAGE_KEY = 'olymris_whitelist_v3';
+    const STORAGE_KEY = 'olymris_whitelist_v4';
     const MASTER_SEED_WALLET = '0xa0fc544e44a0cdfcd7c314f650f63329fb574a00';
+
+    // --- Visual Notifications (Toast) ---
+    const toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container';
+    document.body.appendChild(toastContainer);
+
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 4000);
+    }
     const OFFICIAL_WALLET_KEY = 'olymris_official_wallet_v1';
     const DEFAULT_OFFICIAL_WALLET = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
     const USDT_CONTRACT_BSC = '0x55d398326f99059ff775485246999027b3197955';
@@ -351,32 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 6. Language Switcher Logic ---
-    
-    // --- Global UI Components ---
-    function showToast(message, type = 'info') {
-        let container = document.querySelector('.toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'toast-container';
-            document.body.appendChild(container);
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerText = message;
-        
-        container.appendChild(toast);
-        
-        // Trigger animation
-        setTimeout(() => toast.classList.add('active'), 10);
-        
-        // Remove after duration
-        setTimeout(() => {
-            toast.classList.remove('active');
-            setTimeout(() => toast.remove(), 400);
-        }, 3000);
-    }
-    
     const translations = {
         'en': {
             'nav_genesis': 'Genesis', 'nav_dual_core': 'Dual Core', 'nav_ecosystem': 'Ecosystem', 'nav_the_loop': 'The Loop',
@@ -569,8 +560,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentStepEl.id === 'step-1') {
                 const wallet = document.getElementById('whitelist-wallet').value.trim();
                 const referrer = document.getElementById('whitelist-referrer').value.trim();
-                if (!wallet || !referrer) return showToast("Please fill in both wallet and referrer.");
-                if (wallet.toLowerCase() === referrer.toLowerCase()) return showToast("You cannot refer yourself.");
+                if (!wallet || !referrer) return showToast("Please fill in both wallet and referrer.", "error");
+                if (wallet.toLowerCase() === referrer.toLowerCase()) return showToast("You cannot refer yourself.", "error");
                 
                 // Real-time Cloud Check for Referrer Status
                 let isReferrerValid = false;
@@ -596,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (!isReferrerValid) {
-                    return showToast(translations[currentLang]['err_invalid_referrer'] || "Invalid Referrer Address. Referrer must be an approved node holder.");
+                    return showToast(translations[currentLang]['err_invalid_referrer'] || "Invalid Referrer Address.", "error");
                 }
             }
 
@@ -627,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tierCard = document.querySelector('.tier-card.active');
         
         if (!wallet || !tierCard) {
-            showToast("Please provide valid information.");
+            showToast("Please provide valid information.", "error");
             return;
         }
 
@@ -650,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Push to Cloud for cross-device sync
         pushToCloud(submission);
 
-        showToast("Submission received. Our team will verify the transaction on the BSC network. Your account will be activated within 24 hours.");
+        showToast("Submission received! Our team will verify the transaction soon.", "success");
         closeModal();
     });
 
@@ -736,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     exportBtn?.addEventListener('click', () => {
         const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        if (data.length === 0) return showToast("No data to export.");
+        if (data.length === 0) return alert("No data to export.");
 
         let md = "# Olymris Node Whitelist Records\n\n";
         md += "| Timestamp | Wallet Address | Referrer | Tier | Status |\n";
@@ -762,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await syncWithCloud();
         btn.innerText = "Force Cloud Sync";
         btn.disabled = false;
-        showToast("Cloud synchronization complete! Records are now globally available.");
+        alert("Cloud synchronization complete! Records are now globally available.");
     });
 
     window.toggleAdminReferrer = async (index) => {
@@ -776,7 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (supabase) {
             await supabase.from('whitelist').update({ is_approved_referrer: newState }).eq('wallet', data[index].wallet);
         }
-        showToast("Referrer Authorization Updated: " + (newState ? "Authorized" : "Unauthorized"));
+        showToast("Referrer Auth Updated: " + (newState ? "Authorized" : "Unauthorized"), "success");
         renderAdminTable();
     };
 
@@ -856,7 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isAdminAuthenticated = true;
             showAdminDashboard();
         } else {
-            showToast("Unauthorized Access.");
+            showToast("Unauthorized Access.", "error");
             adminPassInput.value = '';
         }
     });
@@ -881,9 +872,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveOfficialWalletBtn?.addEventListener('click', () => {
         const newAddr = officialWalletInput.value.trim();
-        if (newAddr.length < 20) return showToast("Please enter a valid wallet address.");
+        if (newAddr.length < 20) return showToast("Please enter a valid wallet address.", "error");
         localStorage.setItem(OFFICIAL_WALLET_KEY, newAddr);
-        showToast("Official System Address Updated Successfully!");
+        showToast("Official System Address Updated Successfully!", "success");
     });
 
     clearBtn?.addEventListener('click', async () => {
@@ -893,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Delete all rows where wallet is not '0x0' (trick to delete all)
                 await supabase.from('whitelist').delete().neq('wallet', '0x0');
             }
-            showToast("All data cleared.");
+            showToast("All data cleared.", "info");
             location.reload();
         }
     });
@@ -929,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     portalCheckBtn?.addEventListener('click', async () => {
         const inputWallet = portalWalletInput.value.trim().toLowerCase();
-        if (!inputWallet) return showToast("Please enter your wallet address.");
+        if (!inputWallet) return showToast("Please enter your wallet address.", "error");
 
         // Visual Feedback
         const originalText = portalCheckBtn.innerText;
@@ -999,7 +990,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pendingMsg.style.display = 'none';
             }
         } else {
-            showToast("No participation record found for this wallet address.");
+            showToast("No participation record found for this wallet address.", "info");
         }
     });
 
