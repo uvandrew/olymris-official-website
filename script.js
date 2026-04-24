@@ -971,14 +971,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Phase B: One-Click Payment Logic ---
     document.getElementById('pay-via-wallet-btn')?.addEventListener('click', async () => {
-        if (typeof window.ethereum === 'undefined') return alert("No crypto wallet detected.");
+        if (typeof window.ethereum === 'undefined') return alert("No crypto wallet detected. Please use MetaMask or TP Wallet.");
         
         const tierCard = document.querySelector('.tier-card.active');
         if (!tierCard) return alert("Please select a tier first.");
         const amount = tierCard.getAttribute('data-tier');
         const officialWallet = getOfficialWallet();
 
+        const btn = document.getElementById('pay-via-wallet-btn');
+        const originalText = "Pay via Wallet (One-Click)";
+
         try {
+            // 1. Explicitly request accounts first
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             
@@ -986,25 +992,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 "function transfer(address to, uint256 amount) public returns (bool)"
             ], signer);
 
-            const btn = document.getElementById('pay-via-wallet-btn');
-            btn.innerText = "Processing...";
+            btn.innerText = "Check your wallet...";
             btn.disabled = true;
 
-            // Parse units (USDT on BSC has 18 decimals, but USDT on Ethereum has 6. 
-            // IMPORTANT: BSC USDT BEP20 is 18 decimals)
+            // 2. Trigger Transfer
+            // BSC USDT BEP20 uses 18 decimals
             const tx = await usdtContract.transfer(officialWallet, ethers.utils.parseUnits(amount, 18));
             
+            btn.innerText = "Broadcasting...";
+            console.log("Transaction sent:", tx.hash);
+            
             alert("Transaction submitted! Please wait for network confirmation.");
-            btn.innerText = "Transaction Sent";
+            btn.innerText = "Success";
             
             // Automatically trigger the 'I Have Paid' logic once tx is sent
             document.querySelector('.finish-step').click();
             
         } catch (error) {
-            console.error("Payment failed", error);
-            alert("Payment failed: " + (error.message || "Unknown error"));
-            document.getElementById('pay-via-wallet-btn').innerText = "Pay via Wallet (One-Click)";
-            document.getElementById('pay-via-wallet-btn').disabled = false;
+            console.error("Payment Error:", error);
+            let msg = "Payment failed";
+            if (error.code === 4001) msg = "Transaction cancelled by user.";
+            else if (error.message?.includes("insufficient funds")) msg = "Insufficient BNB for gas or USDT balance.";
+            
+            alert(msg);
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
     });
 
