@@ -492,6 +492,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === whitelistModal) closeModal();
     });
 
+    // Close modals and mobile menu when clicking nav links
+    document.querySelectorAll('.nav-links a, .mobile-nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            closeModal();
+            document.querySelector('.mobile-menu')?.classList.remove('active');
+            document.querySelector('.menu-toggle')?.classList.remove('active');
+        });
+    });
+
     nextBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const currentStepEl = btn.closest('.modal-step');
