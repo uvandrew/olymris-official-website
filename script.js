@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             referrer: item.referrer || 'N/A',
                             tier: item.tier || '3000',
                             status: item.status || 'Verification Pending',
+                            is_approved_referrer: item.is_approved_referrer || false,
                             timestamp: item.timestamp || item.created_at || new Date().toISOString()
                         };
                         mergedMap.set(item.wallet.toLowerCase(), validItem);
@@ -146,6 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!item || !item.wallet) continue;
                     const existsInCloud = cloudData.some(c => c.wallet.toLowerCase() === item.wallet.toLowerCase());
                     if (!existsInCloud) {
+                        // Ensure it has the new field before pushing
+                        if (item.is_approved_referrer === undefined) item.is_approved_referrer = false;
                         await pushToCloud(item);
                     }
                 }
@@ -553,11 +556,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const { data: refData, error } = await supabase
                             .from('whitelist')
-                            .select('status')
+                            .select('is_approved_referrer')
                             .eq('wallet', referrer)
                             .maybeSingle();
                         
-                        if (refData && refData.status === 'Approved') {
+                        if (refData && refData.is_approved_referrer === true) {
                             isReferrerValid = true;
                         }
                     } catch (err) {
@@ -683,6 +686,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         </span>
                     </td>
                     <td>
+                        <span class="status-pill" style="cursor: pointer; background: ${item.is_approved_referrer ? 'rgba(0,180,255,0.1)' : 'transparent'}; border-color: ${item.is_approved_referrer ? '#00b4ff' : 'rgba(255,255,255,0.2)'}; color: ${item.is_approved_referrer ? '#00b4ff' : '#fff'};" onclick="${isMaster ? '' : `window.toggleAdminReferrer(${originalIndex})`}">
+                            ${item.is_approved_referrer ? 'Authorized' : 'Unauthorized'}
+                        </span>
+                    </td>
+                    <td>
                         ${isMaster ? '<span style="opacity:0.2; font-size:0.6rem;">LOCKED</span>' : `<button style="background: none; border: 1px solid rgba(255,0,0,0.3); color: #ff4444; font-size: 0.6rem; padding: 0.3rem 0.6rem; cursor: pointer; border-radius: 2px;" onclick="window.deleteAdminRecord(${originalIndex})">Delete</button>`}
                     </td>
                 </tr>
@@ -731,6 +739,20 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = false;
         alert("Cloud synchronization complete! Records are now globally available.");
     });
+
+    window.toggleAdminReferrer = async (index) => {
+        let data = getWhitelistData();
+        if (data[index].wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) return;
+        
+        const newState = !data[index].is_approved_referrer;
+        data[index].is_approved_referrer = newState;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        
+        if (supabase) {
+            await supabase.from('whitelist').update({ is_approved_referrer: newState }).eq('wallet', data[index].wallet);
+        }
+        renderAdminTable();
+    };
 
     window.toggleAdminStatus = async (index) => {
         let data = getWhitelistData();
