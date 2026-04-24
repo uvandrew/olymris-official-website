@@ -957,69 +957,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('portal-connect-btn')?.addEventListener('click', () => connectWallet('portal-wallet'));
     document.getElementById('whitelist-connect-btn')?.addEventListener('click', () => connectWallet('whitelist-wallet'));
 
-    // --- Referral Link Copy Logic ---
-    document.getElementById('portal-copy-ref-btn')?.addEventListener('click', () => {
-        const wallet = document.getElementById('portal-wallet').value.trim();
-        if (!wallet) return alert("Wallet not connected.");
-        const refLink = `${window.location.origin}${window.location.pathname}?ref=${wallet}`;
-        navigator.clipboard.writeText(refLink);
-        const btn = document.getElementById('portal-copy-ref-btn');
-        const oldText = btn.innerText;
-        btn.innerText = "COPIED!";
-        setTimeout(() => btn.innerText = oldText, 2000);
-    });
-
-    // --- Phase B: One-Click Payment Logic ---
-    document.getElementById('pay-via-wallet-btn')?.addEventListener('click', async () => {
-        if (typeof window.ethereum === 'undefined') return alert("No crypto wallet detected. Please use MetaMask or TP Wallet.");
-        
-        const tierCard = document.querySelector('.tier-card.active');
-        if (!tierCard) return alert("Please select a tier first.");
-        const amount = tierCard.getAttribute('data-tier');
-        const officialWallet = getOfficialWallet();
-
-        const btn = document.getElementById('pay-via-wallet-btn');
-        const originalText = "Pay via Wallet (One-Click)";
-
-        try {
-            // 1. Explicitly request accounts first
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            
-            const usdtContract = new ethers.Contract(USDT_CONTRACT_BSC, [
-                "function transfer(address to, uint256 amount) public returns (bool)"
-            ], signer);
-
-            btn.innerText = "Check your wallet...";
-            btn.disabled = true;
-
-            // 2. Trigger Transfer
-            // BSC USDT BEP20 uses 18 decimals
-            const tx = await usdtContract.transfer(officialWallet, ethers.utils.parseUnits(amount, 18));
-            
-            btn.innerText = "Broadcasting...";
-            console.log("Transaction sent:", tx.hash);
-            
-            alert("Transaction submitted! Please wait for network confirmation.");
-            btn.innerText = "Success";
-            
-            // Automatically trigger the 'I Have Paid' logic once tx is sent
-            document.querySelector('.finish-step').click();
-            
-        } catch (error) {
-            console.error("Payment Error:", error);
-            let msg = "Payment failed";
-            if (error.code === 4001) msg = "Transaction cancelled by user.";
-            else if (error.message?.includes("insufficient funds")) msg = "Insufficient BNB for gas or USDT balance.";
-            
-            alert(msg);
-            btn.innerText = originalText;
-            btn.disabled = false;
-        }
-    });
-
     // --- 10. Smooth Navbar Transition ---
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
