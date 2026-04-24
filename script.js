@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     nextBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const currentStepEl = btn.closest('.modal-step');
             
             if (currentStepEl.id === 'step-1') {
@@ -543,12 +543,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!wallet || !referrer) return alert("Please fill in both wallet and referrer.");
                 if (wallet.toLowerCase() === referrer.toLowerCase()) return alert("You cannot refer yourself.");
                 
-                // Validate Referrer exists and is Approved using the sync-safe function
-                const data = getWhitelistData();
-                const isReferrerValid = data.some(item => item.wallet.toLowerCase() === referrer.toLowerCase() && item.status === 'Approved');
+                // Real-time Cloud Check for Referrer Status
+                let isReferrerValid = false;
+                
+                // Always allow the Master Seed
+                if (referrer.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) {
+                    isReferrerValid = true;
+                } else if (supabase) {
+                    try {
+                        const { data: refData, error } = await supabase
+                            .from('whitelist')
+                            .select('status')
+                            .eq('wallet', referrer)
+                            .maybeSingle();
+                        
+                        if (refData && refData.status === 'Approved') {
+                            isReferrerValid = true;
+                        }
+                    } catch (err) {
+                        console.error("Referrer check failed:", err);
+                    }
+                } else {
+                    // Fallback to local data if offline
+                    const data = getWhitelistData();
+                    isReferrerValid = data.some(item => item.wallet.toLowerCase() === referrer.toLowerCase() && item.status === 'Approved');
+                }
                 
                 if (!isReferrerValid) {
-                    return alert(translations[currentLang]['err_invalid_referrer'] || "Invalid Referrer Address.");
+                    return alert(translations[currentLang]['err_invalid_referrer'] || "Invalid Referrer Address. Referrer must be an approved node holder.");
                 }
             }
 
