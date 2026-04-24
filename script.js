@@ -616,7 +616,8 @@ document.addEventListener('DOMContentLoaded', () => {
             referrer: referrer,
             tier: tier,
             timestamp: new Date().toLocaleString(),
-            status: "Verification Pending"
+            status: "Verification Pending",
+            is_approved_referrer: false // Always false by default for new members
         };
         
         let allSubmissions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -674,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
         adminTbody.innerHTML = filteredData.map((item, index) => {
             // Find actual index in master data to keep actions working
             const originalIndex = data.indexOf(item);
-            const isMaster = item.wallet === MASTER_SEED_WALLET;
+            const isMaster = item.wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase();
             return `
                 <tr>
                     <td>${item.timestamp}</td>
