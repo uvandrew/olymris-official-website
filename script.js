@@ -114,6 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
             debugBanner.style.display = 'none';
             
             if (cloudData) {
+                console.log("Cloud records found:", cloudData.length);
+                console.table(cloudData);
                 let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 const mergedMap = new Map();
                 
@@ -769,6 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('theme-dark');
         document.body.classList.remove('theme-light');
         document.querySelectorAll('section:not(#admin-section)').forEach(s => s.style.display = 'none');
+        syncWithCloud();
         initAdminPaymentUI();
         renderAdminTable();
     }
