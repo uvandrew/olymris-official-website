@@ -493,14 +493,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === whitelistModal) closeModal();
     });
 
-    // Close modals and mobile menu when clicking nav links or buttons
-    document.querySelectorAll('.navbar a, .navbar button, .mobile-menu a, .mobile-menu button').forEach(el => {
-        el.addEventListener('click', () => {
-            // If it's a modal trigger, the specific listener will reopen it after this
+    // Close modals and mobile menu when clicking nav links (anchors with hashes)
+    document.querySelectorAll('.navbar a[href^="#"], .mobile-menu a[href^="#"]').forEach(link => {
+        link.addEventListener('click', () => {
             closeModal();
             document.querySelector('.mobile-menu')?.classList.remove('active');
             document.querySelector('.menu-toggle')?.classList.remove('active');
         });
+    });
+
+    // Language switcher also closes modals
+    langItems.forEach(item => {
+        item.addEventListener('click', () => closeModal());
     });
 
     nextBtns.forEach(btn => {
