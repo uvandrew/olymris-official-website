@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'entry_title': '大幕初启', 'entry_body_1': '每个系统都有一个起点。在它变得显而易见之前的一个时刻。', 'entry_body_2': '就是现在。', 'entry_cta': '加入创世',
             'nav_whitelist': '白名单',
             'modal_step1_title': '节点白名单', 'modal_step1_body': '输入您的 BSC (BEP-20) 钱包地址以开始入驻。', 'modal_next': '继续',
-            'modal_step2_title': '选择节点', 'modal_step2_body': '选择您的参与节点。将应用稳定币与平台通证比例。',
+            'modal_step2_title': '选择节点', 'modal_step2_body': '选择您的参与节点。将应用稳定通证与平台通证比例。',
             'modal_step3_title': '完成', 'modal_step3_body': '将所选金额发送至下方官方 BSC 地址。', 'modal_copy': '复制地址', 'modal_payment_note': '确认后，您的账户将在 24 小时内激活。', 'modal_finish': '我已支付',
             'modal_referrer_label': '推荐人钱包 (必填)', 'err_invalid_referrer': '无效的推荐人地址。推荐人必须是已批准的节点持有者。',
             'nav_portal': '节点门户', 'portal_title': '节点门户', 'portal_desc': '输入您的钱包地址以查看节点状态和配额。', 'portal_view_btn': '查看我的节点', 'portal_status_active': '节点已激活', 'portal_status_pending': '审核中', 'portal_label_tier': '节点参与', 'portal_label_ausd': 'AUSD 余额', 'portal_label_olym': 'OLYM 配额', 'portal_exit': '退出门户', 'portal_pending_msg': '审核正在进行中。一旦批准，您的配额将显示在这里。',
