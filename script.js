@@ -549,10 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Real-time Cloud Check for Referrer Status
                 let isReferrerValid = false;
                 
-                // Always allow the Master Seed
-                if (referrer.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) {
-                    isReferrerValid = true;
-                } else if (supabase) {
+                if (supabase) {
                     try {
                         const { data: refData, error } = await supabase
                             .from('whitelist')
@@ -569,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     // Fallback to local data if offline
                     const data = getWhitelistData();
-                    isReferrerValid = data.some(item => item.wallet.toLowerCase() === referrer.toLowerCase() && item.status === 'Approved');
+                    isReferrerValid = data.some(item => item.wallet.toLowerCase() === referrer.toLowerCase() && item.is_approved_referrer === true);
                 }
                 
                 if (!isReferrerValid) {
