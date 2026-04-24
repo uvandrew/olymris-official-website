@@ -460,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStep = 1;
 
     function openModal() {
+        closeModal();
         whitelistModal.classList.add('active');
         document.body.style.overflow = 'hidden';
         currentStep = 1;
@@ -814,9 +815,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     portalBtns.forEach(btn => {
         btn?.addEventListener('click', () => {
+            closeModal();
             portalModal.classList.add('active');
             portalLogin.style.display = 'block';
             portalView.style.display = 'none';
+            document.body.style.overflow = 'hidden';
             // Close mobile menu if open
             document.querySelector('.mobile-menu').classList.remove('active');
             document.querySelector('.menu-toggle').classList.remove('active');
