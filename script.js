@@ -934,38 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = 'hidden';
     });
 
-    // --- Web3 Connect Logic (Phase A) ---
-    async function connectWallet(targetInputId) {
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                // Request account access
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (accounts.length > 0) {
-                    const address = accounts[0];
-                    document.getElementById(targetInputId).value = address;
-                    // Optional: Visual feedback
-                    const btn = document.getElementById(targetInputId === 'portal-wallet' ? 'portal-connect-btn' : 'whitelist-connect-btn');
-                    if (btn) {
-                        const originalText = btn.innerText;
-                        btn.innerText = "CONNECTED";
-                        btn.style.color = "#0f6";
-                        setTimeout(() => {
-                            btn.innerText = originalText;
-                            btn.style.color = "#fff";
-                        }, 2000);
-                    }
-                }
-            } catch (error) {
-                console.error("User denied account access", error);
-                alert("Connection failed. Please unlock your wallet and try again.");
-            }
-        } else {
-            alert("No crypto wallet detected. Please install TokenPocket or MetaMask, or enter your address manually.");
-        }
-    }
 
-    document.getElementById('portal-connect-btn')?.addEventListener('click', () => connectWallet('portal-wallet'));
-    document.getElementById('whitelist-connect-btn')?.addEventListener('click', () => connectWallet('whitelist-wallet'));
 
     // --- 10. Smooth Navbar Transition ---
     const navbar = document.querySelector('.navbar');
