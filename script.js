@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </span>
                     </td>
                     <td>
-                        <span class="status-pill" style="cursor: pointer; background: ${item.is_approved_referrer ? 'rgba(0,180,255,0.1)' : 'transparent'}; border-color: ${item.is_approved_referrer ? '#00b4ff' : 'rgba(255,255,255,0.2)'}; color: ${item.is_approved_referrer ? '#00b4ff' : '#fff'};" onclick="${isMaster ? '' : `window.toggleAdminReferrer(${originalIndex})`}">
+                        <span class="status-pill" style="cursor: pointer; background: ${item.is_approved_referrer ? 'rgba(0,180,255,0.1)' : 'transparent'}; border-color: ${item.is_approved_referrer ? '#00b4ff' : 'rgba(255,255,255,0.2)'}; color: ${item.is_approved_referrer ? '#00b4ff' : '#fff'};" onclick="window.toggleAdminReferrer(${originalIndex})">
                             ${item.is_approved_referrer ? 'Authorized' : 'Unauthorized'}
                         </span>
                     </td>
@@ -741,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.toggleAdminReferrer = async (index) => {
         let data = getWhitelistData();
-        if (data[index].wallet.toLowerCase() === MASTER_SEED_WALLET.toLowerCase()) return;
+        // Removed Master Seed protection to allow manual authorization
         
         const newState = !data[index].is_approved_referrer;
         data[index].is_approved_referrer = newState;
