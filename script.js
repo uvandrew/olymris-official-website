@@ -650,6 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 referrer: "N/A",
                 tier: "10000",
                 status: "Approved",
+                is_approved_referrer: true,
                 timestamp: "GENESIS"
             };
             data.unshift(masterNode);
@@ -682,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${item.tier} USDT</td>
                     <td>
                         <span class="status-pill" style="cursor: pointer; background: ${item.status === 'Approved' ? 'rgba(0,255,100,0.1)' : 'transparent'}; border-color: ${item.status === 'Approved' ? '#0f6' : 'rgba(255,255,255,0.2)'}; color: ${item.status === 'Approved' ? '#0f6' : '#fff'};" onclick="${isMaster ? '' : `window.toggleAdminStatus(${originalIndex})`}">
-                            ${item.status}
+                            ${item.status || 'Verification Pending'}
                         </span>
                     </td>
                     <td>
