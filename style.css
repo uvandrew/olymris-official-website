@@ -594,6 +594,47 @@ body.theme-light {
     position: relative;
 }
 
+/* Premium Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.toast {
+    background: rgba(15, 15, 15, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 1.2rem 2.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 280px;
+}
+
+.toast.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.toast.success { border-left: 3px solid #0f6; }
+.toast.error { border-left: 3px solid #ff4444; }
+.toast.info { border-left: 3px solid #00b4ff; }
+
 .status-pill {
     font-size: 0.6rem;
     padding: 0.3rem 0.6rem;
