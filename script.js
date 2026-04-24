@@ -9,14 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let currentLang = 'en';
 
+    // --- Failsafe: Ensure loader hides even if scripts fail ---
+    setTimeout(() => {
+        const loader = document.querySelector('.loader');
+        if (loader && !loader.classList.contains('hidden')) {
+            loader.classList.add('hidden');
+            console.warn("Loader forced to hide after 5s failsafe.");
+        }
+    }, 5000);
+
     // --- Cloud Database Configuration ---
     // Successfully connected to Olymris-Portal on Supabase
     const SUPABASE_URL = 'https://nbwbcywekvffzrishrss.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_chuN4C2iwECd9IFDsWyBRg_K_zmqnRq';
     
     let supabase = null;
-    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && window.supabase) {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } else {
+        console.warn("Supabase not initialized: URL not set or library missing.");
     }
 
     // --- Cloud Status Indicator ---
