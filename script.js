@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             updateStatusDot('online');
-            debugBanner.style.display = 'none';
             
             if (cloudData) {
                 console.log("Cloud records found:", cloudData.length);
