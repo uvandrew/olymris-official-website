@@ -105,32 +105,57 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { data: cloudData, error } = await supabase.from('whitelist').select('*');
             if (error) {
-                showDebug(error.message);
+                showDebug("Sync Error: " + error.message);
                 updateStatusDot('error');
                 return;
             }
 
             updateStatusDot('online');
             debugBanner.style.display = 'none';
+            
             if (cloudData) {
                 let localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 const mergedMap = new Map();
-                localData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
-                cloudData.forEach(item => mergedMap.set(item.wallet.toLowerCase(), item));
+                
+                // 1. First, populate with local records to preserve anything unique
+                localData.forEach(item => {
+                    if (item && item.wallet) mergedMap.set(item.wallet.toLowerCase(), item);
+                });
+                
+                // 2. Overwrite/Add with Cloud records (Source of Truth)
+                cloudData.forEach(item => {
+                    if (item && item.wallet) {
+                        // Ensure required fields exist
+                        const validItem = {
+                            wallet: item.wallet,
+                            referrer: item.referrer || 'N/A',
+                            tier: item.tier || '3000',
+                            status: item.status || 'Verification Pending',
+                            timestamp: item.timestamp || item.created_at || new Date().toISOString()
+                        };
+                        mergedMap.set(item.wallet.toLowerCase(), validItem);
+                    }
+                });
                 
                 const mergedData = Array.from(mergedMap.values());
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedData));
                 
+                // 3. Optional: Push missing local records back to cloud
                 for (const item of localData) {
+                    if (!item || !item.wallet) continue;
                     const existsInCloud = cloudData.some(c => c.wallet.toLowerCase() === item.wallet.toLowerCase());
                     if (!existsInCloud) {
                         await pushToCloud(item);
                     }
                 }
-                if (typeof renderAdminTable === 'function') renderAdminTable();
+                
+                // Force a re-render of the table
+                if (typeof renderAdminTable === 'function') {
+                    renderAdminTable();
+                }
             }
         } catch (e) {
-            showDebug(e.message || "Unknown Exception");
+            console.error("Sync Exception:", e);
             updateStatusDot('error');
         }
     }
